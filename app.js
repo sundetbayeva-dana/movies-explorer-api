@@ -8,6 +8,7 @@ const { errors } = require('celebrate');
 const { createUser, login } = require('./controllers/users');
 const auth = require('./midlewares/auth');
 const NotFoundError = require('./errors/not-found-err');
+const { requestLogger, errorLogger } = require('./midlewares/logger');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -19,6 +20,7 @@ mongoose.connect('mongodb://localhost:27017/movieservicedb', {
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -38,6 +40,12 @@ app.post('/signin', celebrate({
 app.use(auth);
 app.use('/', require('./routes/movies'));
 app.use('/', require('./routes/users'));
+
+app.get('/signout', (req, res) => {
+  res.status(200).clearCookie('jwt').send({ message: 'Выход' });
+});
+
+app.use(errorLogger);
 
 app.use('/', (req, res, next) => {
   next(new NotFoundError('Запрос несуществующей страницы'));
