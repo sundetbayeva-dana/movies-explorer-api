@@ -5,14 +5,18 @@ const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
 const UnathorizedError = require('../errors/unathorized-err');
-const { verifyConst } = require('../utils/const');
+const { VERIFY_CONST } = require('../utils/configs');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getCurrentUserInformation = (req, res, next) => {
-  User.findById(req.users._id)
+  User.findById(req.user._id)
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.status(200).send({
+        data: {
+          email: user.email, name: user.name,
+        },
+      });
     })
     .catch(next);
 };
@@ -31,7 +35,11 @@ const updateUserInformation = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      res.status(200).send({ data: user });
+      res.status(200).send({
+        data: {
+          email: user.email, name: user.name,
+        },
+      });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -72,8 +80,8 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : verifyConst, { expiresIn: '7d' });
-      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true });
+      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : VERIFY_CONST, { expiresIn: '7d' });
+      res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: true });
       res.status(200).send({
         data: {
           email: user.email, name: user.name,

@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon app.js",
     "start": "node app.js",
+    "lint": "eslint .",
     "lint:fix": "eslint --fix"
   },
   "repository": {
@@ -25,7 +26,9 @@
     "celebrate": "^15.0.0",
     "cookie-parser": "^1.4.6",
     "express": "^4.17.2",
+    "express-rate-limit": "^6.1.0",
     "express-winston": "^4.2.0",
+    "helmet": "^5.0.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.6",
     "validator": "^13.7.0",

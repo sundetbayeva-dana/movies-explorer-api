@@ -59,7 +59,8 @@ const deleteMovie = (req, res, next) => {
       } else {
         throw new ForbiddenError('Попытка удалить фильм в чужом аккаунте');
       }
-    });
+    })
+    .catch(next);
 };
 
 module.exports = {

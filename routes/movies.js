@@ -17,9 +17,10 @@ router.post('/movies', celebrate({
     description: Joi.string().required(),
     image: Joi.string().required().custom(validateURL),
     trailer: Joi.string().required().custom(validateURL),
+    thumbnail: Joi.string().required().custom(validateURL),
+    owner: Joi.string().required().length(24).hex(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-    thumbnail: Joi.string().required().custom(validateURL),
     movieId: Joi.string().required(),
   }),
 }), createMovie);

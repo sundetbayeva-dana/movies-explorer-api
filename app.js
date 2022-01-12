@@ -4,16 +4,20 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
+const helmet = require('helmet');
 
 const { createUser, login } = require('./controllers/users');
 const auth = require('./midlewares/auth');
 const NotFoundError = require('./errors/not-found-err');
 const { requestLogger, errorLogger } = require('./midlewares/logger');
+const errorHandler = require('./midlewares/error-handler');
+const { MONGODB_URL } = require('./utils/configs');
+const limiter = require('./midlewares/rate-limit');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/movieservicedb', {
+mongoose.connect(MONGODB_URL, {
   useNewUrlParser: true,
 });
 
@@ -21,6 +25,8 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
+app.use(helmet());
+app.use(limiter);
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -38,8 +44,7 @@ app.post('/signin', celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', require('./routes/movies'));
-app.use('/', require('./routes/users'));
+app.use('/', require('./routes/index'));
 
 app.get('/signout', (req, res) => {
   res.status(200).clearCookie('jwt').send({ message: 'Выход' });
@@ -52,16 +57,6 @@ app.use('/', (req, res, next) => {
 });
 
 app.use(errors());
-
-app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res
-    .status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? 'На сервере произошла ошибка'
-        : message,
-    });
-});
+app.use(errorHandler);
 
 app.listen(PORT);
