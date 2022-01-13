@@ -37,7 +37,7 @@ app.post('/signup', celebrate({
   }),
 }), createUser);
 
-app.post('/signin', celebrate({
+app.post('/api/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
@@ -45,7 +45,7 @@ app.post('/signin', celebrate({
 }), login);
 
 app.use(auth);
-app.use('/', require('./routes/index'));
+app.use('/api/', require('./routes/index'));
 
 app.get('/signout', (req, res) => {
   res.status(200).clearCookie('jwt').send({ message: 'Выход' });
@@ -53,7 +53,7 @@ app.get('/signout', (req, res) => {
 
 app.use(errorLogger);
 
-app.use('/', (req, res, next) => {
+app.use('/api/', (req, res, next) => {
   next(new NotFoundError('Запрос несуществующей страницы'));
 });
 
