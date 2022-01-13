@@ -1,13 +1,13 @@
 const { celebrate, Joi } = require('celebrate');
 const router = require('express').Router();
 const {
-  getAllSavedMovies, createMovie, deleteMovie,
+  getOwnSavedMovies, createMovie, deleteMovie,
 } = require('../controllers/movies');
 const {
   validateURL, validateNumber,
 } = require('../utils/validate');
 
-router.get('/movies', getAllSavedMovies);
+router.get('/movies', getOwnSavedMovies);
 router.post('/movies', celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),

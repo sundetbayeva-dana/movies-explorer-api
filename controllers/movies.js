@@ -3,17 +3,13 @@ const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ForbiddenError = require('../errors/forbidden-err');
 
-const getAllSavedMovies = (req, res, next) => {
-  Movie.find({ owned: req.user._id })
+const getOwnSavedMovies = (req, res, next) => {
+  Movie.find({ owner: req.user._id })
     .then((movie) => {
       if (!movie) {
         throw new NotFoundError('Карточек нет');
       }
-      if (movie.owner === req.user._id) {
-        res.status(200).send({ data: movie });
-      } else {
-        throw new ForbiddenError('Карта не принадлежит пользователю');
-      }
+      res.status(200).send({ data: movie });
     })
     .catch(next);
 };
@@ -68,7 +64,7 @@ const deleteMovie = (req, res, next) => {
 };
 
 module.exports = {
-  getAllSavedMovies,
+  getOwnSavedMovies,
   createMovie,
   deleteMovie,
 };
