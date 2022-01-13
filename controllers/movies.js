@@ -9,7 +9,11 @@ const getAllSavedMovies = (req, res, next) => {
       if (!movie) {
         throw new NotFoundError('Карточек нет');
       }
-      res.status(200).send({ data: movie });
+      if (movie.owner === req.user._id) {
+        res.status(200).send({ data: movie });
+      } else {
+        throw new ForbiddenError('Карта не принадлежит пользователю');
+      }
     })
     .catch(next);
 };
