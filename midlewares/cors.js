@@ -1,4 +1,6 @@
 const allowedCors = [
+  'http://dana.movieservice.nomoredomains.rocks',
+  'https://dana.movieservice.nomoredomains.rocks',
   'http://localhost:3000',
   'https://localhost:3000',
 ];
