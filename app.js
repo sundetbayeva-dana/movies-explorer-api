@@ -29,7 +29,7 @@ app.use(requestLogger);
 app.use(helmet());
 app.use(limiter);
 
-app.post('/api/signup', celebrate({
+app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
