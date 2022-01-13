@@ -47,7 +47,7 @@ app.post('/api/signin', celebrate({
 app.use(auth);
 app.use('/api/', require('./routes/index'));
 
-app.get('/signout', (req, res) => {
+app.post('/api/signout', (req, res) => {
   res.status(200).clearCookie('jwt').send({ message: 'Выход' });
 });
 
