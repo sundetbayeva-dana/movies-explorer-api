@@ -13,6 +13,7 @@ const { requestLogger, errorLogger } = require('./midlewares/logger');
 const errorHandler = require('./midlewares/error-handler');
 const { MONGODB_URL } = require('./utils/configs');
 const limiter = require('./midlewares/rate-limit');
+require('dotenv').config();
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -32,7 +33,7 @@ app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
   }),
 }), createUser);
 
