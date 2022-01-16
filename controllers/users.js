@@ -7,7 +7,7 @@ const ConflictError = require('../errors/conflict-err');
 const UnathorizedError = require('../errors/unathorized-err');
 const { VERIFY_CONST } = require('../utils/configs');
 const {
-  notFoundUser, badRequestMessage, conflictMessage, unathorizedMessage,
+  notFoundUserMessage, badRequestMessage, conflictMessage, unathorizedMessage,
 } = require('../utils/error-const');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
@@ -36,7 +36,7 @@ const updateUserInformation = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError(notFoundUser);
+        throw new NotFoundError(notFoundUserMessage);
       }
       res.send({
         data: {

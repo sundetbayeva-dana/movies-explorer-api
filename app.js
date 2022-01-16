@@ -20,7 +20,6 @@ const qwe = NODE_ENV === 'production' ? MONGODB_URL_PRODUCTION : MONGODB_URL;
 mongoose.connect(qwe, {
   useNewUrlParser: true,
 });
-console.log(qwe);
 
 app.use(cookieParser());
 app.use(bodyParser.json());
