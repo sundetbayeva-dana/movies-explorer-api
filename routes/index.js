@@ -1,8 +1,12 @@
 const router = require('express').Router();
-const usersRouter = require('./users');
-const moviesRouter = require('./movies');
+const auth = require('../midlewares/auth');
 
-router.use('/', moviesRouter);
-router.use('/', usersRouter);
+router.use(require('./signup'));
+router.use(require('./signin'));
+
+router.use(auth);
+router.use(require('./users'));
+router.use(require('./movies'));
+router.use(require('./signout'));
 
 module.exports = router;

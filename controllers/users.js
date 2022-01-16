@@ -6,13 +6,16 @@ const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
 const UnathorizedError = require('../errors/unathorized-err');
 const { VERIFY_CONST } = require('../utils/configs');
+const {
+  notFoundUser, badRequestMessage, conflictMessage, unathorizedMessage,
+} = require('../utils/error-const');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getCurrentUserInformation = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
-      res.status(200).send({
+      res.send({
         data: {
           email: user.email, name: user.name,
         },
@@ -33,9 +36,9 @@ const updateUserInformation = (req, res, next) => {
   )
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не найден');
+        throw new NotFoundError(notFoundUser);
       }
-      res.status(200).send({
+      res.send({
         data: {
           email: user.email, name: user.name,
         },
@@ -43,7 +46,9 @@ const updateUserInformation = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные в метод обновления профиля пользователя'));
+        next(new BadRequestError(badRequestMessage));
+      } else if (err.code === 11000) {
+        next(new ConflictError(conflictMessage));
       } else {
         next(err);
       }
@@ -58,7 +63,7 @@ const createUser = (req, res, next) => {
       return newUser;
     })
     .then((user) => {
-      res.status(200).send({
+      res.send({
         data: {
           email: user.email, name: user.name,
         },
@@ -66,10 +71,9 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.code === 11000) {
-        next(new ConflictError('При регистрации указан email, который уже существует на сервере'));
-      }
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные в метод создания пользователя'));
+        next(new ConflictError(conflictMessage));
+      } else if (err.name === 'ValidationError') {
+        next(new BadRequestError(badRequestMessage));
       } else {
         next(err);
       }
@@ -82,14 +86,14 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : VERIFY_CONST, { expiresIn: '7d' });
       res.cookie('jwt', token, { maxAge: 3600000 * 24 * 7, httpOnly: true, sameSite: true });
-      res.status(200).send({
+      res.send({
         data: {
           email: user.email, name: user.name,
         },
       });
     })
     .catch(() => {
-      next(new UnathorizedError('Неправильные почта или пароль'));
+      next(new UnathorizedError(unathorizedMessage));
     });
 };
 

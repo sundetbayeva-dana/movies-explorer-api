@@ -7,8 +7,8 @@ const {
   validateURL, validateNumber,
 } = require('../utils/validate');
 
-router.get('/movies', getOwnSavedMovies);
-router.post('/movies', celebrate({
+router.get('/api/movies', getOwnSavedMovies);
+router.post('/api/movies', celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
     director: Joi.string().required(),
@@ -20,10 +20,10 @@ router.post('/movies', celebrate({
     thumbnail: Joi.string().required().custom(validateURL),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
-    movieId: Joi.string().required(),
+    movieId: Joi.number().integer().required(),
   }),
 }), createMovie);
-router.delete('/movies/:movieId', celebrate({
+router.delete('/api/movies/:movieId', celebrate({
   params: Joi.object().keys({
     movieId: Joi.string().alphanum().length(24).hex(),
   }),
