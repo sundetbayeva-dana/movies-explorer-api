@@ -15,9 +15,12 @@ require('dotenv').config();
 const { PORT = 3000, MONGODB_URL_PRODUCTION, NODE_ENV } = process.env;
 const app = express();
 
-mongoose.connect(NODE_ENV === 'production' ? MONGODB_URL_PRODUCTION : MONGODB_URL, {
+const qwe = NODE_ENV === 'production' ? MONGODB_URL_PRODUCTION : MONGODB_URL;
+
+mongoose.connect(qwe, {
   useNewUrlParser: true,
 });
+console.log(qwe);
 
 app.use(cookieParser());
 app.use(bodyParser.json());
