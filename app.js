@@ -10,14 +10,16 @@ const { requestLogger, errorLogger } = require('./midlewares/logger');
 const errorHandler = require('./midlewares/error-handler');
 const { MONGODB_URL } = require('./utils/configs');
 const limiter = require('./midlewares/rate-limit');
+const cors = require('./midlewares/cors');
 require('dotenv').config();
 
 const { PORT = 3000, MONGODB_URL_PRODUCTION, NODE_ENV } = process.env;
 const app = express();
+app.use(cors);
 
-const qwe = NODE_ENV === 'production' ? MONGODB_URL_PRODUCTION : MONGODB_URL;
+const mongoUrl = NODE_ENV === 'production' ? MONGODB_URL_PRODUCTION : MONGODB_URL;
 
-mongoose.connect(qwe, {
+mongoose.connect(mongoUrl, {
   useNewUrlParser: true,
 });
 
