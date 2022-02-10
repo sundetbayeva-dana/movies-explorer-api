@@ -5,14 +5,11 @@ const ForbiddenError = require('../errors/forbidden-err');
 const {
   badRequestMessage, notFoundMovieMessage, forbiddenMessage,
 } = require('../utils/error-const');
-const { resDeletedMovie, resEmptyCards } = require('../utils/res-const');
+const { resDeletedMovie } = require('../utils/res-const');
 
 const getOwnSavedMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
     .then((movie) => {
-      if (movie.length === 0) {
-        res.send({ message: resEmptyCards });
-      }
       res.send({ data: movie });
     })
     .catch(next);
