@@ -3,9 +3,9 @@ const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ForbiddenError = require('../errors/forbidden-err');
 const {
-  notFoundCardsMessage, badRequestMessage, notFoundMovieMessage, forbiddenMessage,
+  notFoundCardsMessage, badRequestMessage, forbiddenMessage,
 } = require('../utils/error-const');
-const { resDeletedMovie } = require('../utils/res-const');
+const { resDeletedMovie, resEmptyCards } = require('../utils/res-const');
 
 const getOwnSavedMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
@@ -52,7 +52,7 @@ const deleteMovie = (req, res, next) => {
   Movie.findById(movieId)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError(notFoundMovieMessage);
+        res.send({ message: resEmptyCards });
       }
       if (movie.owner.toString() === req.user._id) {
         Movie.findByIdAndRemove(movieId)
