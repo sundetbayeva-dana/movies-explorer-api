@@ -10,6 +10,9 @@ module.exports = (req, res, next) => {
   try {
     payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : VERIFY_CONST);
   } catch (err) {
+    if (!token) {
+      throw new UnathorizedError('Токен отсутствует');
+    }
     throw new UnathorizedError('Необходима авторизация');
   }
   req.user = payload;
